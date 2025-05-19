@@ -2,13 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 
+import 'firebase_options.dart';
 import 'core/services/firebase_service.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/auth_service.dart';
+import 'features/tasks/task_service.dart';
+import 'features/tasks/task_detail_screen.dart';
+import 'features/tasks/create_task_dialog.dart';
+import 'features/projects/collaborative_projects_screen.dart';
+import 'features/analytics/analytics_screen.dart';
+import 'features/profile/profile_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -17,9 +28,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FirebaseInitializer(
-      builder: (context, _) => const DailyTaskManager(),
-    );
+    return const DailyTaskManager();
   }
 }
 
@@ -367,10 +376,3 @@ class PersonalTasksScreen extends StatelessWidget {
     );
   }
 }
-
-// Import screens and dialogs
-import 'features/tasks/task_detail_screen.dart';
-import 'features/tasks/create_task_dialog.dart';
-import 'features/projects/collaborative_projects_screen.dart';
-import 'features/analytics/analytics_screen.dart';
-import 'features/profile/profile_screen.dart';
