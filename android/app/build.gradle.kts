@@ -11,7 +11,7 @@ plugins {
 android {
     namespace = "com.example.dailytaskmanager"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "21.4.7075529"
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -27,7 +27,7 @@ android {
         applicationId = "com.example.dailytaskmanager"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk = 21 // Explicitly set for file_picker compatibility
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -55,6 +55,8 @@ dependencies {
     implementation("androidx.annotation:annotation:1.7.0")
     implementation("androidx.lifecycle:lifecycle-common:2.6.2")
     implementation("androidx.lifecycle:lifecycle-runtime:2.6.2")
+    implementation("androidx.activity:activity:1.7.2")
+    implementation("androidx.documentfile:documentfile:1.0.1")
     // Support for Flutter embedding v2
     implementation("androidx.fragment:fragment:1.6.2")
 }
