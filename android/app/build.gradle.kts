@@ -27,7 +27,7 @@ android {
         applicationId = "com.example.dailytaskmanager"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 21 // Explicitly set for file_picker compatibility
+        minSdk = 21 // Minimum SDK version for this app
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -50,13 +50,12 @@ dependencies {
     // Add support for new embedding APIs
     implementation("androidx.window:window:1.0.0")
     implementation("androidx.window:window-java:1.0.0")
-    // These are needed for file_picker plugin compatibility
+    // Core Android dependencies
     implementation("androidx.core:core:1.10.1")
     implementation("androidx.annotation:annotation:1.7.0")
     implementation("androidx.lifecycle:lifecycle-common:2.6.2")
     implementation("androidx.lifecycle:lifecycle-runtime:2.6.2")
     implementation("androidx.activity:activity:1.7.2")
-    implementation("androidx.documentfile:documentfile:1.0.1")
     // Support for Flutter embedding v2
     implementation("androidx.fragment:fragment:1.6.2")
 }
