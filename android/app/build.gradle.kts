@@ -11,15 +11,15 @@ plugins {
 android {
     namespace = "com.example.dailytaskmanager"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "21.4.7075529"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
     defaultConfig {
@@ -44,4 +44,17 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Add support for new embedding APIs
+    implementation("androidx.window:window:1.0.0")
+    implementation("androidx.window:window-java:1.0.0")
+    // These are needed for file_picker plugin compatibility
+    implementation("androidx.core:core:1.10.1")
+    implementation("androidx.annotation:annotation:1.7.0")
+    implementation("androidx.lifecycle:lifecycle-common:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-runtime:2.6.2")
+    // Support for Flutter embedding v2
+    implementation("androidx.fragment:fragment:1.6.2")
 }
