@@ -45,22 +45,95 @@ class DailyTaskManager extends ConsumerWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF4A6572),
-          primary: const Color(0xFF4A6572),
-          secondary: const Color(0xFFF9AA33),
-          tertiary: const Color(0xFFE57373),
-          background: Colors.grey[50],
+          seedColor: const Color(0xFF3A3D40), // Dark Grey as seed
+          primary: const Color(0xFF3A3D40),    // Dark Grey
+          secondary: const Color(0xFFF9AA33),   // Yellow Accent
+          background: Colors.white,           // White background
+          surface: Colors.white,              // White for cards/surfaces
+          onPrimary: Colors.white,            // Text on primary
+          onSecondary: Colors.black,           // Text on secondary
+          onBackground: Colors.black,         // Text on background
+          onSurface: Colors.black,            // Text on surface
+          brightness: Brightness.light,
         ),
-        textTheme: GoogleFonts.poppinsTextTheme(),
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme.copyWith(
+                displayLarge: const TextStyle(color: Colors.black),
+                displayMedium: const TextStyle(color: Colors.black),
+                displaySmall: const TextStyle(color: Colors.black),
+                headlineLarge: const TextStyle(color: Colors.black),
+                headlineMedium: const TextStyle(color: Colors.black),
+                headlineSmall: const TextStyle(color: Colors.black),
+                titleLarge: const TextStyle(color: Colors.black),
+                titleMedium: const TextStyle(color: Colors.black),
+                titleSmall: const TextStyle(color: Colors.black),
+                bodyLarge: const TextStyle(color: Colors.black87),
+                bodyMedium: const TextStyle(color: Colors.black87),
+                bodySmall: const TextStyle(color: Colors.black54),
+                labelLarge: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                labelMedium: const TextStyle(color: Colors.black54),
+                labelSmall: const TextStyle(color: Colors.black54),
+              )
+        ),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.white,
           elevation: 0,
-          centerTitle: false,
+          centerTitle: true, // Titles are often centered in the reference
+          iconTheme: const IconThemeData(color: Colors.black), // Ensure icons are visible
           titleTextStyle: GoogleFonts.poppins(
-            fontSize: 20,
+            fontSize: 18, // Adjusted for a cleaner look
             fontWeight: FontWeight.w600,
             color: Colors.black,
           ),
+        ),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          selectedItemColor: const Color(0xFF3A3D40), // Dark Grey for selected items
+          unselectedItemColor: Colors.grey[400],
+          backgroundColor: Colors.white,
+          type: BottomNavigationBarType.fixed,
+          selectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+          unselectedLabelStyle: GoogleFonts.poppins(),
+        ),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: const Color(0xFF3A3D40), // Dark Grey FAB
+          foregroundColor: Colors.white, // White icon on FAB
+        ),
+        cardTheme: CardTheme(
+          elevation: 0, // Cards in reference often have no elevation
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0), // Consistent rounded corners
+          ),
+          color: Colors.white, // Default card color
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.grey[100], // Light grey fill for text fields
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide.none, // No border by default
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: const BorderSide(color: Color(0xFF3A3D40)), // Primary color border on focus
+          ),
+          hintStyle: GoogleFonts.poppins(color: Colors.grey[500]),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFF9AA33), // Yellow accent for main buttons
+            foregroundColor: Colors.black, // Text color on yellow buttons
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            textStyle: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: const Color(0xFF3A3D40), // Primary color for text buttons
+            textStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+          )
         ),
       ),
       home: authState.when(
@@ -151,134 +224,179 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class PersonalTasksScreen extends StatelessWidget {
+class PersonalTasksScreen extends ConsumerWidget {
   const PersonalTasksScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = FirebaseAuth.instance.currentUser;
+    // final userDisplayName = user?.displayName ?? 'User';
+    // For now, using the name from reference image
+    const userDisplayName = 'Fazil Laghari'; 
+
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Hi, ${FirebaseAuth.instance.currentUser?.displayName ?? "User"}!',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-          ],
+        automaticallyImplyLeading: false, // Removes back button if any
+        title: Text(
+          userDisplayName,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
         ),
         actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: CircleAvatar(
+              // Placeholder for profile picture, replace with actual image if available
+              backgroundImage: user?.photoURL != null 
+                  ? NetworkImage(user!.photoURL!) 
+                  : null,
+              child: user?.photoURL == null 
+                  ? const Icon(Icons.person, size: 20) 
+                  : null,
+              radius: 18,
+            ),
+          ),
           IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {},
+            icon: const Icon(Icons.filter_list), // Icon from reference
+            onPressed: () {
+              // Handle filter/sort action
+            },
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: ListView(
+        padding: const EdgeInsets.all(16.0),
         children: [
-          // Premium Banner
+          _buildSectionTitle(context, 'Completed Tasks'),
+          const SizedBox(height: 16),
+          // Placeholder for Horizontal Completed Tasks List
           Container(
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.all(16),
+            height: 150, // Adjust height as needed
+            child: Center(
+              child: Text(
+                'Horizontal list of completed tasks here',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
             decoration: BoxDecoration(
-              color: Colors.black,
+              color: Colors.grey[200],
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.star,
-                  color: Colors.white,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Go Premium!',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      Text(
-                        'Get unlimited access to all our features!',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.white,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {},
-                ),
-              ],
-            ),
           ),
-          // Tasks Categories
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Tasks',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-          ),
+          const SizedBox(height: 24),
+          _buildSectionTitle(context, 'Ongoing Projects'),
           const SizedBox(height: 16),
-          // Task Categories Grid
-          Expanded(
-            child: GridView.count(
-              crossAxisCount: 2,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              children: [
-                _buildCategoryCard(
-                  context,
-                  title: 'Personal',
-                  icon: Icons.person,
-                  color: Colors.orange[100]!,
-                  iconColor: Colors.orange,
-                  tasksLeft: 3,
-                  tasksDone: 4,
-                ),
-                _buildCategoryCard(
-                  context,
-                  title: 'Work',
-                  icon: Icons.work,
-                  color: Colors.red[100]!,
-                  iconColor: Colors.red,
-                  tasksLeft: 2,
-                  tasksDone: 8,
-                ),
-                _buildCategoryCard(
-                  context,
-                  title: 'Health',
-                  icon: Icons.favorite,
-                  color: Colors.blue[100]!,
-                  iconColor: Colors.blue,
-                  tasksLeft: 1,
-                  tasksDone: 4,
-                ),
-                _buildAddCategoryCard(context),
-              ],
-            ),
+          // Placeholder for Vertical Ongoing Projects List
+          // Example of one project item, this would be a list
+          _buildOngoingProjectItem(context, 
+            projectName: 'Real Estate App Design',
+            teamImages: ['placeholder1.png', 'placeholder2.png', 'placeholder3.png'], // Replace with actual image URLs or assets
+            progress: 0.65, // 65%
+            dueDate: '23 March',
           ),
+          const SizedBox(height: 12),
+          _buildOngoingProjectItem(context, 
+            projectName: 'Smart Home App Design',
+            teamImages: ['placeholder_a.png', 'placeholder_b.png'],
+            progress: 0.40, // 40%
+            dueDate: '10 April',
+          ),
+          // Add more project items or a ListView.builder here
         ],
       ),
     );
   }
 
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    return Text(
+      title,
+      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+    );
+  }
+
+  Widget _buildOngoingProjectItem(BuildContext context, {
+    required String projectName,
+    required List<String> teamImages, // Placeholder for image paths/URLs
+    required double progress,
+    required String dueDate,
+  }) {
+    return Card(
+      color: Theme.of(context).colorScheme.primary.withOpacity(0.05), // Light primary color background
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              projectName,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                // Team member icons (placeholder)
+                Row(
+                  children: teamImages.take(3).map((img) => Padding(
+                    padding: const EdgeInsets.only(right: 4.0),
+                    child: CircleAvatar(
+                      radius: 12,
+                      backgroundColor: Colors.grey[300],
+                      // child: Text(img.substring(0,1).toUpperCase()), // Simple placeholder
+                      child: const Icon(Icons.person, size: 14, color: Colors.white), // Generic icon
+                    ), 
+                  )).toList(),
+                ),
+                if (teamImages.length > 3)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4.0),
+                    child: Text('+${teamImages.length - 3}', style: Theme.of(context).textTheme.bodySmall),
+                  ),
+                const Spacer(),
+                Text(
+                  dueDate,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    backgroundColor: Colors.grey[300],
+                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.secondary), // Yellow accent for progress
+                    minHeight: 6,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${(progress * 100).toInt()}%',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.secondary, // Yellow accent
+                      ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // _buildCategoryCard and _buildAddCategoryCard are no longer needed for this design
+  // and can be removed if they are not used elsewhere.
+  // For now, they are kept in case they are part of other screens not yet reviewed.
+
+  // Original _buildCategoryCard (commented out or remove if sure it's not needed)
+  /*
   Widget _buildCategoryCard(
     BuildContext context, {
     required String title,
@@ -342,7 +460,10 @@ class PersonalTasksScreen extends StatelessWidget {
       ),
     );
   }
+  */
 
+  // Original _buildAddCategoryCard (commented out or remove if sure it's not needed)
+  /*
   Widget _buildAddCategoryCard(BuildContext context) {
     return Card(
       elevation: 0,
@@ -375,4 +496,5 @@ class PersonalTasksScreen extends StatelessWidget {
       ),
     );
   }
+  */
 }

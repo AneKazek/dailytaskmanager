@@ -9,6 +9,11 @@ import 'create_project_dialog.dart';
 import 'project_service.dart';
 
 class CollaborativeProjectsScreen extends ConsumerWidget {
+  // Helper to generate placeholder avatar images (replace with actual logic)
+  List<String> _getPlaceholderAvatars(int count) {
+    return List.generate(count, (index) => 'assets/avatar_${index + 1}.png');
+  }
+
   const CollaborativeProjectsScreen({super.key});
 
   @override
@@ -99,14 +104,21 @@ class CollaborativeProjectsScreen extends ConsumerWidget {
   }
 
   Widget _buildProjectCard(BuildContext context, ProjectModel project, WidgetRef ref) {
-    final completedTasks = project.taskCount > 0
-        ? (project.completedTaskCount / project.taskCount * 100).toInt()
-        : 0;
-    
+    final progressValue = project.taskCount > 0
+        ? (project.completedTaskCount / project.taskCount)
+        : 0.0;
+    final progressPercentage = (progressValue * 100).toInt();
+    // Placeholder for due date and team images, adapt ProjectModel if these exist
+    const String dueDate = "25 Dec"; // Example due date
+    final List<String> teamMemberImages = _getPlaceholderAvatars(project.memberIds.length > 0 ? project.memberIds.length : 3);
+
     return Card(
+      // Using theme's cardTheme for consistency, but can override here if needed
+      // color: Theme.of(context).colorScheme.surface, // or a light tint of primary
+      color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), // from theme
+      elevation: 0, // from theme
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -116,97 +128,72 @@ class CollaborativeProjectsScreen extends ConsumerWidget {
             ),
           );
         },
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                project.name,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 8),
               Row(
                 children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: _getProjectColor(project.name),
-                      borderRadius: BorderRadius.circular(8),
+                  // Team member icons (placeholder)
+                  if (teamMemberImages.isNotEmpty)
+                    SizedBox(
+                      height: 24,
+                      child: Stack(
+                        children: List.generate(teamMemberImages.take(3).length, (i) {
+                          return Positioned(
+                            left: (i * 16).toDouble(), // Overlapping effect
+                            child: CircleAvatar(
+                              radius: 12,
+                              backgroundColor: Colors.grey[300],
+                              // child: Text(teamMemberImages[i][0]), // Placeholder with initial
+                              child: const Icon(Icons.person, size: 14, color: Colors.white), // Generic icon
+                            ),
+                          );
+                        }),
+                      ),
                     ),
-                    child: Center(
-                      child: Text(
-                        project.name.substring(0, 1).toUpperCase(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
+                  if (teamMemberImages.length > 3)
+                    Padding(
+                      padding: EdgeInsets.only(left: (3 * 16) + 4.0),
+                      child: Text('+${teamMemberImages.length - 3}', style: Theme.of(context).textTheme.bodySmall),
+                    ),
+                  const Spacer(),
+                  Text(
+                    dueDate, // Placeholder due date
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              // Progress Bar and Percentage
+              Row(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4), // Rounded corners for the progress bar itself
+                      child: LinearProgressIndicator(
+                        value: progressValue,
+                        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                        valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.secondary), // Yellow accent
+                        minHeight: 6, // Slightly thicker progress bar
                       ),
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          project.name,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                        Text(
-                          '${project.memberIds.length} members',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.grey[600],
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.more_vert),
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                project.description,
-                style: Theme.of(context).textTheme.bodyMedium,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Progress',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.grey[600],
-                              ),
-                        ),
-                        const SizedBox(height: 4),
-                        LinearProgressIndicator(
-                          value: project.taskCount > 0
-                              ? project.completedTaskCount / project.taskCount
-                              : 0,
-                          backgroundColor: Colors.grey[200],
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
                   Text(
-                    '$completedTasks%',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    '$progressPercentage%',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.secondary, // Yellow accent
                         ),
                   ),
                 ],
