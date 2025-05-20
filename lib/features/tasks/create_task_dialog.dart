@@ -70,7 +70,8 @@ class _CreateTaskDialogState extends ConsumerState<CreateTaskDialog> {
       );
 
       await ref.read(taskServiceProvider).createTask(task);
-
+      
+      // Langsung tutup dialog setelah task berhasil disimpan
       if (mounted) {
         Navigator.of(context).pop(true);
       }
@@ -79,9 +80,7 @@ class _CreateTaskDialogState extends ConsumerState<CreateTaskDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error creating task: ${e.toString()}')),
         );
-      }
-    } finally {
-      if (mounted) {
+        
         setState(() {
           _isLoading = false;
         });
