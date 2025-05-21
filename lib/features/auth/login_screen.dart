@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'auth_service.dart';
-import '../../main.dart';
+import '../../main.dart'; // Import untuk DailyTaskManager
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -12,7 +12,9 @@ class LoginScreen extends ConsumerStatefulWidget {
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-simport 'package:flutter_svg/flutter_svg.dart'; // Untuk logo Google jika SVG
+// ignore: duplicate_import
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // Untuk logo Google jika SVG
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
@@ -65,7 +67,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       // Navigasi setelah login berhasil
       if (mounted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()), // Ganti dengan layar utama Anda
+          MaterialPageRoute(builder: (context) => const DailyTaskManager()), // Menggunakan DailyTaskManager sebagai layar utama
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -94,7 +96,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final userCredential = await ref.read(authServiceProvider).signInWithGoogle();
       if (userCredential != null && mounted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()), // Ganti dengan layar utama Anda
+          MaterialPageRoute(builder: (context) => const DailyTaskManager()), // Menggunakan DailyTaskManager sebagai layar utama
         );
       }
     } on FirebaseAuthException catch (e) {

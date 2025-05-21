@@ -38,7 +38,7 @@ class DailyTaskManager extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final authState = ref.watch(authStateProvider); // Komentari atau hapus jika SplashScreen menangani logika awal
+    final authState = ref.watch(authStateProvider); // Uncomment untuk menangani navigasi berdasarkan status auth
     
     return MaterialApp(
       // home: authState.when( // Logika lama untuk menentukan halaman awal

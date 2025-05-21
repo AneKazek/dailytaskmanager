@@ -1,5 +1,6 @@
-reimport 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart'; // Untuk pola topografi jika SVG
+import 'dart:ui' as ui;
 
 import 'login_screen.dart'; // Akan diupdate nanti
 
@@ -139,23 +140,28 @@ class WelcomeScreen extends StatelessWidget {
 }
 
 // CustomClipper untuk efek gelombang di WelcomeScreen
-class WaveClipperWelcome extends CustomClipper<Path> {
+class WaveClipperWelcome extends CustomClipper<ui.Path> {
   @override
-  Path getClip(Size size) {
-    final path = Path();
-    path.lineTo(0, size.height * 0.6); // Mulai dari kiri, sedikit di atas tengah wave
-    // Kurva ke atas (puncak wave)
-    path.quadraticBezierTo(size.width / 4, size.height * 0.2, size.width / 2, size.height * 0.5);
-    // Kurva ke bawah (lembah wave)
-    path.quadraticBezierTo(size.width * 3 / 4, size.height * 0.8, size.width, size.height * 0.6);
-    path.lineTo(size.width, 0); // Ke kanan atas
-    path.lineTo(0, 0); // Ke kiri atas untuk menutup path
-    path.close();
+  ui.Path getClip(ui.Size size) {
+    var path = ui.Path();
+    path.lineTo(0, size.height); // Mulai dari kiri bawah
+    
+    // Buat kurva wave
+    var firstControlPoint = ui.Offset(size.width / 4, size.height - 30);
+    var firstEndPoint = ui.Offset(size.width / 2, size.height - 40);
+    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy, firstEndPoint.dx, firstEndPoint.dy);
+    
+    var secondControlPoint = ui.Offset(size.width - (size.width / 4), size.height - 50);
+    var secondEndPoint = ui.Offset(size.width, size.height - 20);
+    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy, secondEndPoint.dx, secondEndPoint.dy);
+    
+    path.lineTo(size.width, 0); // Garis ke kanan atas
+    path.close(); // Tutup path
     return path;
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return false; // Tidak perlu reclip karena statis
+  bool shouldReclip(CustomClipper<ui.Path> oldClipper) {
+    return false; // Tidak perlu reclip
   }
 }

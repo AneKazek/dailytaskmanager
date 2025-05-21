@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../core/models/task_model.dart';
 import '../auth/auth_service.dart';
@@ -15,6 +16,19 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool _isDarkMode = false; // State for the dark mode toggle
+
+  Future<String?> _fetchUsername(String userId) async {
+    try {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      if (userDoc.exists && userDoc.data() != null) {
+        return (userDoc.data() as Map<String, dynamic>)['username'] as String?;
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error fetching username: $e'); // Consider using a logger
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,50 +62,88 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildUserProfileHeader(BuildContext context, User? user) {
-    // Using name from reference image for now
-    const displayName = 'Fazil Laghari';
-    const displayEmail = 'fazil.laghari@example.com'; // Placeholder email
+    if (user == null) {
+      // Fallback for when user is null (e.g., not logged in, though ProfileScreen might not be reachable)
+      return Column(
+        children: [
+          CircleAvatar(
+            radius: 50,
+            backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            child: const Icon(Icons.person_outline, size: 50, color: Color(0xFF3A3D40)),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Guest User',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Please log in',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+          ),
+        ],
+      );
+    }
 
-    return Column(
-      children: [
-        Stack(
-          alignment: Alignment.bottomRight,
+    return FutureBuilder<String?>(
+      future: _fetchUsername(user.uid),
+      builder: (context, snapshot) {
+        String finalDisplayName = 'Fazil Laghari'; // Default placeholder
+        final String displayEmail = user.email ?? 'user@example.com';
+
+        if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
+          // Show user's Firebase Auth display name or email part while loading Firestore username
+          finalDisplayName = user.displayName?.isNotEmpty == true ? user.displayName! : (user.email?.split('@').first ?? 'Loading...');
+        } else if (snapshot.hasData && snapshot.data != null && snapshot.data!.isNotEmpty) {
+          finalDisplayName = snapshot.data!; // Username from Firestore
+        } else if (user.displayName != null && user.displayName!.isNotEmpty) {
+          finalDisplayName = user.displayName!; // Username from Firebase Auth
+        } else if (user.email != null && user.email!.isNotEmpty) {
+          finalDisplayName = user.email!.split('@').first; // Fallback to email part if username and display name are not available
+        }
+
+        return Column(
           children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-              backgroundImage: user?.photoURL != null
-                  ? NetworkImage(user!.photoURL!)
-                  : null, // Placeholder for actual image
-              child: user?.photoURL == null
-                  ? const Icon(Icons.person, size: 50, color: Color(0xFF3A3D40))
-                  : null,
+            Stack(
+              alignment: Alignment.bottomRight,
+              children: [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                  backgroundImage: user.photoURL != null ? NetworkImage(user.photoURL!) : null,
+                  child: user.photoURL == null
+                      ? const Icon(Icons.person, size: 50, color: Color(0xFF3A3D40))
+                      : null,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary, // Yellow accent
+                    shape: BoxShape.circle,
+                  ),
+                  padding: const EdgeInsets.all(4),
+                  child: const Icon(Icons.camera_alt, size: 16, color: Colors.black),
+                )
+              ],
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary, // Yellow accent
-                shape: BoxShape.circle,
-              ),
-              padding: const EdgeInsets.all(4),
-              child: const Icon(Icons.camera_alt, size: 16, color: Colors.black),
-            )
+            const SizedBox(height: 16),
+            Text(
+              finalDisplayName,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              displayEmail,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+              textAlign: TextAlign.center,
+            ),
           ],
-        ),
-        const SizedBox(height: 16),
-        Text(
-          user?.displayName ?? displayName, // Use actual name if available
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          user?.email ?? displayEmail, // Use actual email if available
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[600],
-              ),
-        ),
-      ],
+        );
+      },
     );
   }
 
