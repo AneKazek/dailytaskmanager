@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
 import 'core/services/firebase_service.dart';
+import 'features/auth/splash_screen.dart'; // Diubah dari LoginScreen ke SplashScreen
 import 'features/auth/login_screen.dart';
 import 'features/auth/auth_service.dart';
 import 'features/tasks/task_service.dart';
@@ -37,9 +38,15 @@ class DailyTaskManager extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authStateProvider);
+    // final authState = ref.watch(authStateProvider); // Komentari atau hapus jika SplashScreen menangani logika awal
     
     return MaterialApp(
+      // home: authState.when( // Logika lama untuk menentukan halaman awal
+      //   data: (user) => user != null ? const HomeScreen() : const LoginScreen(),
+      //   loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+      //   error: (_, __) => const Scaffold(body: Center(child: Text('Something went wrong'))),
+      // ),
+      home: const SplashScreen(), // Atur SplashScreen sebagai halaman awal
       title: 'Daily Task Manager',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -146,6 +153,9 @@ class DailyTaskManager extends ConsumerWidget {
     );
   }
 }
+
+// Pastikan HomeScreen ada dan diimpor jika digunakan setelah SplashScreen
+// import 'features/home/home_screen.dart'; // Contoh path, sesuaikan
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
