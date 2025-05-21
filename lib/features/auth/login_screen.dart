@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // Untuk logo Google jika SVG
 
 import 'auth_service.dart';
 import '../../main.dart'; // Import untuk DailyTaskManager
@@ -11,10 +12,6 @@ class LoginScreen extends ConsumerStatefulWidget {
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
-
-// ignore: duplicate_import
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // Untuk logo Google jika SVG
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
@@ -169,7 +166,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    // Judul “Sign in”
+                    // Judul "Sign in"
                     const Text(
                       'Sign in',
                       style: TextStyle(
@@ -348,7 +345,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    // Footer: Don’t have an Account ? Sign up
+                    // Footer: Don't have an Account ? Sign up
                     Align(
                       alignment: Alignment.center,
                       child: TextButton(
@@ -363,7 +360,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           text: const TextSpan(
                             style: TextStyle(color: Colors.grey, fontFamily: 'SansSerif', fontSize: 14),
                             children: <TextSpan>[
-                              TextSpan(text: "Don’t have an Account ? "),
+                              TextSpan(text: "Don't have an Account ? "),
                               TextSpan(
                                 text: 'Sign up',
                                 style: TextStyle(color: Color(0xFFF9AA33), fontWeight: FontWeight.bold),

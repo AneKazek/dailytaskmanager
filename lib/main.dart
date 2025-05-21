@@ -41,12 +41,7 @@ class DailyTaskManager extends ConsumerWidget {
     final authState = ref.watch(authStateProvider); // Uncomment untuk menangani navigasi berdasarkan status auth
     
     return MaterialApp(
-      // home: authState.when( // Logika lama untuk menentukan halaman awal
-      //   data: (user) => user != null ? const HomeScreen() : const LoginScreen(),
-      //   loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-      //   error: (_, __) => const Scaffold(body: Center(child: Text('Something went wrong'))),
-      // ),
-      home: const SplashScreen(), // Atur SplashScreen sebagai halaman awal
+      // Removed duplicate home parameter
       title: 'Daily Task Manager',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
