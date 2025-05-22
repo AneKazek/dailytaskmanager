@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:google_fonts/google_fonts.dart'; // Will be used for Roboto
+import 'package:flutter_svg/flutter_svg.dart'; // For SVG icons if needed
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
 import 'core/services/firebase_service.dart';
-import 'features/auth/splash_screen.dart'; // Diubah dari LoginScreen ke SplashScreen
+import 'features/auth/splash_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/auth_service.dart';
 import 'features/tasks/task_service.dart';
-import 'features/tasks/task_detail_screen.dart';
-import 'features/tasks/create_task_dialog.dart';
-import 'features/projects/collaborative_projects_screen.dart';
+// import 'features/tasks/task_detail_screen.dart'; // May not be needed directly in main
+// import 'features/tasks/create_task_dialog.dart'; // Will be replaced by a dedicated screen or updated dialog
+// import 'features/projects/collaborative_projects_screen.dart'; // To be replaced by new Projects/Dashboard screen
 import 'features/analytics/analytics_screen.dart';
-import 'features/profile/profile_screen.dart';
+// import 'features/profile/profile_screen.dart'; // Profile screen might be accessed differently or integrated into new design
+
+import 'features/home/home_dashboard_screen.dart'; // Screen A
+import 'features/tasks/calendar_task_list_screen.dart'; // Screen B
+import 'features/tasks/create_task_screen.dart'; // Screen C
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,9 +52,13 @@ class DailyTaskManager extends ConsumerWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF3A3D40), // Dark Grey as seed
-          primary: const Color(0xFF3A3D40),    // Dark Grey
-          secondary: const Color(0xFFF9AA33),   // Yellow Accent
+          seedColor: const Color(0xFF8A2BE2), // Purple from gradient
+          primary: const Color(0xFF8A2BE2),    // Purple
+          secondary: const Color(0xFF4B0082),   // Blue from gradient (or a contrasting accent)
+          // Define gradient colors for reuse
+          // gradientStart: const Color(0xFF8A2BE2), // Purple
+          // gradientEnd: const Color(0xFF4B0082),   // Dark Blue
+          error: Colors.redAccent,
           background: Colors.white,           // White background
           surface: Colors.white,              // White for cards/surfaces
           onPrimary: Colors.white,            // Text on primary
@@ -58,7 +67,8 @@ class DailyTaskManager extends ConsumerWidget {
           onSurface: Colors.black,            // Text on surface
           brightness: Brightness.light,
         ),
-        textTheme: GoogleFonts.poppinsTextTheme(
+        // Primary Font: Roboto
+        textTheme: GoogleFonts.robotoTextTheme(
           Theme.of(context).textTheme.copyWith(
                 displayLarge: const TextStyle(color: Colors.black),
                 displayMedium: const TextStyle(color: Colors.black),
@@ -82,7 +92,7 @@ class DailyTaskManager extends ConsumerWidget {
           elevation: 0,
           centerTitle: true, // Titles are often centered in the reference
           iconTheme: const IconThemeData(color: Colors.black), // Ensure icons are visible
-          titleTextStyle: GoogleFonts.poppins(
+          titleTextStyle: GoogleFonts.roboto(
             fontSize: 18, // Adjusted for a cleaner look
             fontWeight: FontWeight.w600,
             color: Colors.black,
@@ -93,11 +103,11 @@ class DailyTaskManager extends ConsumerWidget {
           unselectedItemColor: Colors.grey[400],
           backgroundColor: Colors.white,
           type: BottomNavigationBarType.fixed,
-          selectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-          unselectedLabelStyle: GoogleFonts.poppins(),
+          selectedLabelStyle: GoogleFonts.roboto(fontWeight: FontWeight.w600),
+          unselectedLabelStyle: GoogleFonts.roboto(),
         ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: const Color(0xFF3A3D40), // Dark Grey FAB
+          backgroundColor: const Color(0xFF8A2BE2), // Purple FAB
           foregroundColor: Colors.white, // White icon on FAB
         ),
         cardTheme: CardTheme(
@@ -109,23 +119,23 @@ class DailyTaskManager extends ConsumerWidget {
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: Colors.grey[100], // Light grey fill for text fields
+          fillColor: Colors.grey[200], // Light grey fill for text fields, consistent with design
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
             borderSide: BorderSide.none, // No border by default
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: const BorderSide(color: Color(0xFF3A3D40)), // Primary color border on focus
+            borderSide: const BorderSide(color: Color(0xFF8A2BE2)), // Primary color border on focus
           ),
-          hintStyle: GoogleFonts.poppins(color: Colors.grey[500]),
+          hintStyle: GoogleFonts.roboto(color: Colors.grey[500]),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFF9AA33), // Yellow accent for main buttons
-            foregroundColor: Colors.black, // Text color on yellow buttons
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            textStyle: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
+            backgroundColor: const Color(0xFF8A2BE2), // Purple for main buttons (or gradient)
+            foregroundColor: Colors.white, // Text color on purple buttons
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16), // Adjusted padding
+            textStyle: GoogleFonts.roboto(fontSize: 16, fontWeight: FontWeight.bold), // Roboto bold
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0),
             ),
@@ -133,13 +143,13 @@ class DailyTaskManager extends ConsumerWidget {
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-            foregroundColor: const Color(0xFF3A3D40), // Primary color for text buttons
-            textStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+            foregroundColor: const Color(0xFF8A2BE2), // Primary color for text buttons
+            textStyle: GoogleFonts.roboto(fontWeight: FontWeight.w600),
           )
         ),
       ),
       home: authState.when(
-        data: (user) => user != null ? const HomeScreen() : const LoginScreen(),
+        data: (user) => user != null ? const MainAppScreen() : const LoginScreen(), // Changed to MainAppScreen
         loading: () => const Scaffold(
           body: Center(child: CircularProgressIndicator()),
         ),
@@ -149,357 +159,113 @@ class DailyTaskManager extends ConsumerWidget {
   }
 }
 
-// Pastikan HomeScreen ada dan diimpor jika digunakan setelah SplashScreen
-// import 'features/home/home_screen.dart'; // Contoh path, sesuaikan
-
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+// Placeholder for the new main application screen with bottom navigation
+class MainAppScreen extends StatefulWidget {
+  const MainAppScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<MainAppScreen> createState() => _MainAppScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-  
+class _MainAppScreenState extends State<MainAppScreen> {
+  late PageController _pageController;
+  int _currentPageIndex = 0; // Tracks the current page for PageView and BottomNavBar
+  // int _selectedIndex = 0; // Replaced by _currentPageIndex
+
+  static final List<Widget> _widgetOptions = <Widget>[
+    const HomeDashboardScreen(),    // Screen A: Projects (Home/Dashboard) - Page 0
+    const CalendarTaskListScreen(), // Screen B: Analytics (Calendar + Task List) - Page 1
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentPageIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _onItemTapped(int navBarIndex) {
+    if (navBarIndex == 1) { // Middle item is FAB
+      _showAddTaskScreen();
+      return;
+    }
+    // Determine the target page index for PageView
+    int targetPageIndex = navBarIndex > 1 ? navBarIndex - 1 : navBarIndex;
+    _pageController.animateToPage(
+      targetPageIndex,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+    // No need to call setState here for _currentPageIndex, as onPageChanged will handle it.
+  }
+
+  void _showAddTaskScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const CreateTaskScreen()), // Navigate to Screen C
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: [
-          // Personal Tasks Screen
-          const PersonalTasksScreen(),
-          // Collaborative Projects Screen
-          const CollaborativeProjectsScreen(),
-          // Analytics Screen
-          const AnalyticsScreen(),
-          // Profile Screen
-          const ProfileScreen(),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
+      body: PageView(
+        controller: _pageController,
+        children: _widgetOptions,
+        onPageChanged: (index) {
+          if (mounted) {
+            setState(() {
+              _currentPageIndex = index;
+            });
+          }
         },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people_outline),
-            activeIcon: Icon(Icons.people),
-            label: 'Projects',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart_outlined),
-            activeIcon: Icon(Icons.bar_chart),
-            label: 'Analytics',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Show task creation dialog
-          showDialog(
-            context: context,
-            builder: (context) => CreateTaskDialog(
-              userId: FirebaseAuth.instance.currentUser?.uid ?? '',
-              isPersonal: true,
-            ),
-          );
-        },
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        onPressed: _showAddTaskScreen,
+        shape: const CircleBorder(),
+        elevation: 2.0,
         child: const Icon(Icons.add, color: Colors.white),
       ),
-    );
-  }
-}
-
-class PersonalTasksScreen extends ConsumerWidget {
-  const PersonalTasksScreen({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final user = FirebaseAuth.instance.currentUser;
-    // final userDisplayName = user?.displayName ?? 'User';
-    // For now, using the name from reference image
-    const userDisplayName = 'Fazil Laghari'; 
-
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false, // Removes back button if any
-        title: Text(
-          userDisplayName,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: CircleAvatar(
-              // Placeholder for profile picture, replace with actual image if available
-              backgroundImage: user?.photoURL != null 
-                  ? NetworkImage(user!.photoURL!) 
-                  : null,
-              child: user?.photoURL == null 
-                  ? const Icon(Icons.person, size: 20) 
-                  : null,
-              radius: 18,
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.filter_list), // Icon from reference
-            onPressed: () {
-              // Handle filter/sort action
-            },
-          ),
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          _buildSectionTitle(context, 'Completed Tasks'),
-          const SizedBox(height: 16),
-          // Placeholder for Horizontal Completed Tasks List
-          Container(
-            height: 150, // Adjust height as needed
-            child: Center(
-              child: Text(
-                'Horizontal list of completed tasks here',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          const SizedBox(height: 24),
-          _buildSectionTitle(context, 'Ongoing Projects'),
-          const SizedBox(height: 16),
-          // Placeholder for Vertical Ongoing Projects List
-          // Example of one project item, this would be a list
-          _buildOngoingProjectItem(context, 
-            projectName: 'Real Estate App Design',
-            teamImages: ['placeholder1.png', 'placeholder2.png', 'placeholder3.png'], // Replace with actual image URLs or assets
-            progress: 0.65, // 65%
-            dueDate: '23 March',
-          ),
-          const SizedBox(height: 12),
-          _buildOngoingProjectItem(context, 
-            projectName: 'Smart Home App Design',
-            teamImages: ['placeholder_a.png', 'placeholder_b.png'],
-            progress: 0.40, // 40%
-            dueDate: '10 April',
-          ),
-          // Add more project items or a ListView.builder here
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(BuildContext context, String title) {
-    return Text(
-      title,
-      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-    );
-  }
-
-  Widget _buildOngoingProjectItem(BuildContext context, {
-    required String projectName,
-    required List<String> teamImages, // Placeholder for image paths/URLs
-    required double progress,
-    required String dueDate,
-  }) {
-    return Card(
-      color: Theme.of(context).colorScheme.primary.withOpacity(0.05), // Light primary color background
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              projectName,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                // Team member icons (placeholder)
-                Row(
-                  children: teamImages.take(3).map((img) => Padding(
-                    padding: const EdgeInsets.only(right: 4.0),
-                    child: CircleAvatar(
-                      radius: 12,
-                      backgroundColor: Colors.grey[300],
-                      // child: Text(img.substring(0,1).toUpperCase()), // Simple placeholder
-                      child: const Icon(Icons.person, size: 14, color: Colors.white), // Generic icon
-                    ), 
-                  )).toList(),
-                ),
-                if (teamImages.length > 3)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4.0),
-                    child: Text('+${teamImages.length - 3}', style: Theme.of(context).textTheme.bodySmall),
-                  ),
-                const Spacer(),
-                Text(
-                  dueDate,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    backgroundColor: Colors.grey[300],
-                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.secondary), // Yellow accent for progress
-                    minHeight: 6,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${(progress * 100).toInt()}%',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.secondary, // Yellow accent
-                      ),
-                ),
-              ],
-            ),
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8.0, // Margin for the FAB notch
+        color: Colors.white,
+        elevation: 8.0, // Standard elevation for BottomAppBar
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            _buildNavItem(icon: Icons.home, label: 'Projects', index: 0),
+            // Central FAB takes up space, so we add a SizedBox or similar for spacing
+            const SizedBox(width: 48), // Placeholder for FAB space
+            _buildNavItem(icon: Icons.bar_chart, label: 'Analytics', index: 2),
           ],
         ),
       ),
     );
   }
 
-  // _buildCategoryCard and _buildAddCategoryCard are no longer needed for this design
-  // and can be removed if they are not used elsewhere.
-  // For now, they are kept in case they are part of other screens not yet reviewed.
-
-  // Original _buildCategoryCard (commented out or remove if sure it's not needed)
-  /*
-  Widget _buildCategoryCard(
-    BuildContext context, {
-    required String title,
-    required IconData icon,
-    required Color color,
-    required Color iconColor,
-    required int tasksLeft,
-    required int tasksDone,
-  }) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const TaskDetailScreen(),
-          ),
-        );
-      },
-      child: Card(
-        elevation: 0,
-        color: color,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                icon,
-                color: iconColor,
-                size: 32,
-              ),
-              const Spacer(),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Text(
-                    '$tasksLeft left',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.blue,
-                        ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '$tasksDone done',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey,
-                        ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+  Widget _buildNavItem({required IconData icon, required String label, required int navBarIndex}) {
+    // Determine the page index this nav item corresponds to
+    int targetPageIndex = navBarIndex > 1 ? navBarIndex - 1 : navBarIndex;
+    final bool isSelected = (_currentPageIndex == targetPageIndex);
+    
+    return IconButton(
+      icon: Icon(icon, color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey[500]),
+      tooltip: label,
+      onPressed: () => _onItemTapped(navBarIndex),
     );
   }
-  */
-
-  // Original _buildAddCategoryCard (commented out or remove if sure it's not needed)
-  /*
-  Widget _buildAddCategoryCard(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey[300]!, width: 1),
-      ),
-      child: InkWell(
-        onTap: () {},
-        borderRadius: BorderRadius.circular(16),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.add,
-                size: 32,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Add',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-  */
 }
+    );
+  }
+}
+
+// The old PersonalTasksScreen and its helper methods are removed as they will be replaced by the new design.
+// Ensure that any dependencies on these (like _buildSectionTitle, _buildOngoingProjectItem) are also removed or refactored
+// if they were used by other parts of the app that are being kept.
