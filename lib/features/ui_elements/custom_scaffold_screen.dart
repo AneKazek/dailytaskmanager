@@ -49,22 +49,22 @@ class _CustomScaffoldScreenState extends State<CustomScaffoldScreen> {
           print('Central Add FAB tapped');
           // This could navigate to a new screen or show a modal, etc.
         },
-        backgroundColor: Colors.white, // FAB background
-        foregroundColor: const Color(0xFF8A2BE2), // Icon color, matching the bar
-        elevation: 2.0,
+        backgroundColor: const Color(0xFF4CAF50), // Green background to match the image
+        foregroundColor: Colors.white, // White icon color
+        elevation: 4.0,
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 30),
       ),
       bottomNavigationBar: BottomAppBar(
-        color: const Color(0xFF8A2BE2), // Purple background
+        color: const Color(0xFF4CAF50), // Green background to match the image
         shape: const CircularNotchedRectangle(),
-        notchMargin: 8.0, // Margin for the FAB notch
-        elevation: 8.0,
+        notchMargin: 6.0, // Margin for the FAB notch
+        elevation: 4.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             _buildNavItem(iconData: Icons.home_outlined, selectedIconData: Icons.home, index: 0, label: 'Home'),
-            _buildNavItem(iconData: Icons.chat_bubble_outline, selectedIconData: Icons.chat_bubble, index: 1, label: 'Chat'),
+            _buildNavItem(iconData: Icons.description_outlined, selectedIconData: Icons.description, index: 1, label: 'Tasks'),
             const SizedBox(width: 48), // Placeholder for the FAB
             _buildNavItem(iconData: Icons.notifications_none_outlined, selectedIconData: Icons.notifications, index: 3, label: 'Notifications'),
             _buildNavItem(iconData: Icons.person_outline, selectedIconData: Icons.person, index: 4, label: 'Profile'),
@@ -97,7 +97,7 @@ class _CustomScaffoldScreenState extends State<CustomScaffoldScreen> {
       case 0:
         return 'Home';
       case 1:
-        return 'Chat';
+        return 'Tasks';
       // Index 2 is FAB, not a page
       case 3:
         return 'Notifications';
