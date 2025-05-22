@@ -240,10 +240,10 @@ class _MainAppScreenState extends State<MainAppScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            _buildNavItem(icon: Icons.home, label: 'Projects', index: 0),
+            _buildNavItem(icon: Icons.home, label: 'Projects', navBarIndex: 0),
             // Central FAB takes up space, so we add a SizedBox or similar for spacing
             const SizedBox(width: 48), // Placeholder for FAB space
-            _buildNavItem(icon: Icons.bar_chart, label: 'Analytics', index: 2),
+            _buildNavItem(icon: Icons.bar_chart, label: 'Analytics', navBarIndex: 2),
           ],
         ),
       ),
@@ -259,9 +259,6 @@ class _MainAppScreenState extends State<MainAppScreen> {
       icon: Icon(icon, color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey[500]),
       tooltip: label,
       onPressed: () => _onItemTapped(navBarIndex),
-    );
-  }
-}
     );
   }
 }

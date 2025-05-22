@@ -295,8 +295,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     );
   }
 
-  }
-
   Future<void> _selectDate() async {
     DateTime? picked = await showDatePicker(
       context: context,
